@@ -11,8 +11,13 @@ class Nave:
         self.width = width
         self.height = height
         self.velx = 10
-        self.img = pygame.transform.scale(pygame.image.load('nave\Ship5.png'),(70,70))
-        self.img2 =[pygame.transform.scale(pygame.image.load('nave\exhaust1.png'),(40,40)),pygame.transform.scale(pygame.image.load('nave\exhaust2.png'),(40,40)),pygame.transform.scale(pygame.image.load('nave\exhaust3.png'),(40,40)),pygame.transform.scale(pygame.image.load('nave\exhaust04.png'),(40,40))]
+        self.img = pygame.transform.scale(pygame.image.load(os.path.join('nave\Ship5.png')),(70,70))
+        self.img2 =[
+            pygame.transform.scale(pygame.image.load(os.path.join('nave\exhaust1.png')),(40,40)),
+            pygame.transform.scale(pygame.image.load(os.path.join('nave\exhaust2.png')),(40,40)),
+            pygame.transform.scale(pygame.image.load(os.path.join('nave\exhaust3.png')),(40,40)),
+            pygame.transform.scale(pygame.image.load(os.path.join('nave\exhaust04.png')),(40,40))
+        ]
         self.win = win
         self.tiros = []
         self.tempoTiro  = 0
@@ -56,8 +61,8 @@ class Nave:
 
 class Bullets:
     def __init__(self,x,y,tiros,width):
-        self.imgtiro = pygame.transform.scale(pygame.image.load('shot5\shot5_5.png'),(100,100))
-        self.shoot_sound = pygame.mixer.Sound('som\shoot_sound.mp3')
+        self.imgtiro = pygame.transform.scale(pygame.image.load(os.path.join('shot5\shot5_5.png')),(100,100))
+        self.shoot_sound = pygame.mixer.Sound(os.path.join('som\shoot_sound.mp3'))
         self.rectBullets = pygame.Rect(x,y,50,50)
         self.rectBullets.x = x
         self.rectBullets.y = y

@@ -1,6 +1,5 @@
 import pygame
 import os
-import time
 import random
 from spaceship import Nave 
 from meteoro import Meteoro
@@ -13,33 +12,28 @@ font = pygame.font.SysFont('Comicsans',40)
 #VARIÁVEIS
 width = 900
 height = 600
+score = 0
 i = 0
 k = 0
 z = 0
 tiros = []
-y = 300
-x = 300
 px_fundo = 0
-radius = 20
-vel = 10
 run = True
-som_fundo = pygame.mixer.Sound('som\\fundo.mp3')
 somStatus = False
 current_time = 0
 timeMeteoro = 0
 criarMeteoroTempo = 0
 timeFoguete = 0
-score = 0
 count_meteoro = []
 count_explosions = []
+som_fundo = pygame.mixer.Sound(os.path.join('som','fundo.mp3'))
 
 #criando um canvas
 win = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Meteoro')
-img_fundo = pygame.image.load('fundo\\fundo.png').convert()
-
-
-clock = pygame.time.Clock()      
+img_fundo = pygame.image.load(os.path.join('fundo','fundo.png'))
+clock = pygame.time.Clock()  
+#nave    
 ship = Nave(0,height/2,win,width,height)
 
 def draw():
@@ -73,57 +67,69 @@ def draw():
         bala.remover_balas(False)
 
     #desenhando o meteoro
+    meteoro_img_control()
     global score
     for meteoro in count_meteoro:
         meteoro.mov_meteoro(count_meteoro)
         meteoro.desenhar_meteoro(win)
-        #Checando colisão
-        if meteoro.rect.colliderect(ship.rectNave) == True:
-            meteoro.remove_meteoro(count_meteoro,True)
-        for balas in tiros:
-            if meteoro.rect.colliderect(balas.rectBullets):
-                score +=1
-                #Criando explosão
-                explosao = Explosion(meteoro.rect.x,meteoro.rect.y,win,count_explosions)
-                count_explosions.append(explosao)
-                
-                meteoro.remove_meteoro(count_meteoro,True)
-                balas.remover_balas(True)
    
     #desenhando explosões
     for explosion in count_explosions:
         explosion.explosion_timer(current_time)
 
-
-
-
-                
-
-                
     #desenhando fonts
     texto = font.render('Pontuação: '+str(score),1,(255,255,255))
     win.blit(texto,(0,0))
+
+def collisionFunc(count_meteoro,tiros,ship):
+    global score
+    #check collission
+
+    for meteoro in count_meteoro:
+        #Meteoro vs Nave
+        if meteoro.rect.colliderect(ship.rectNave):
+            meteoro.remove_meteoro(count_meteoro,True)
+            print('colidiu com a Nave')
+        for tiro in tiros:
+            if meteoro.rect.colliderect(tiro.rectBullets):
+                score +=1
+                #Criando explosão
+                explosao = Explosion(meteoro.rect.x,meteoro.rect.y,win,count_explosions)
+                count_explosions.append(explosao)
+                meteoro.remove_meteoro(count_meteoro,True)
+                tiro.remover_balas(True)
 
 def criar_meteoro():
     global criarMeteoroTempo
     if len(count_meteoro) < 10 and current_time - criarMeteoroTempo >= 1000:
         criarMeteoroTempo = pygame.time.get_ticks()
         meteoro = Meteoro(width+50,random.randint(0, height),random.randint(2,7))
-
         count_meteoro.append(meteoro)
 
+def playMusic():
+    #Musica de Fundo
+    global somStatus
+    if somStatus == False:
+        som_fundo.play(-1)
+        somStatus = True
 
+def meteoro_img_control():
+    #meteoro
+    global timeMeteoro
+    if current_time - timeMeteoro >= 80:
+        timeMeteoro = pygame.time.get_ticks()
+        for meteoro in count_meteoro:
+            meteoro.mudar_img()
 
 #Loop principal do game
 while run:
     current_time = pygame.time.get_ticks()
     clock.tick(60)
     win.fill((0,0,0))
+    
+    #playMusic
+    playMusic()
 
-    #Musica de Fundo
-    if somStatus == False:
-        som_fundo.play(-1)
-        somStatus = True
     #Criar meteoro
     criar_meteoro()
 
@@ -131,20 +137,15 @@ while run:
     #Controle Movimentação
     userInput = pygame.key.get_pressed()
     ship.control_nave(userInput,current_time,tiros)
-    if userInput[pygame.K_k]:
-        contador2 = pygame.time.get_ticks()
     
-    #Controle do tempo
-    if current_time - timeMeteoro >= 80:
-        timeMeteoro = pygame.time.get_ticks()
-        for meteoro in count_meteoro:
-            meteoro.mudar_img()
+    #collisionCheck
+    collisionFunc(count_meteoro,tiros,ship)
     
     #encerrando o game
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    
+    #desenhando
     draw()
     pygame.display.update()
 

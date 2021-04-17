@@ -1,9 +1,25 @@
 import pygame
-
+import os
 class Meteoro:
     def __init__(self,px,py,vel):
-        self.meteoro_img1 = [pygame.transform.scale(pygame.image.load('meteoro\\a10000.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10001.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10002.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10003.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10004.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10005.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10006.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10007.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10008.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10009.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10010.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10011.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10012.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10013.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10014.png'),(70,70)),pygame.transform.scale(pygame.image.load('meteoro\\a10015.png'),(70,70))]
-        self.life = 3
+        self.meteoro_img1 = [
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10000.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10001.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10002.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10003.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10004.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10005.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10006.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10007.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10008.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10009.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10010.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10011.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10012.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10013.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10014.png')),(70,70)),
+            pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10015.png')),(70,70))
+            ]
         self.vel = vel
         self.py = py
         self.px = px
@@ -27,9 +43,6 @@ class Meteoro:
 
     def remove_meteoro(self,count_meteoro,value):
         count_meteoro.remove(self)
-        if value == True:
-            print('colidiu')
-
 
 
         
