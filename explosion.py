@@ -11,17 +11,18 @@ class Explosion:
         self.count_explosions = count_explosions
 
     def explosion_timer(self,current_time):
-        if (current_time - self.explosionTimer) >= 5:
+        if (current_time - self.explosionTimer) >= 100:
             self.explosionTimer = pygame.time.get_ticks()
             self.explosion_meteor_bullet()
 
     def explosion_meteor_bullet(self):
         self.win.blit(self.explosion_img[self.explosion_count],(self.meteor_px,self.meteor_py))
+        
         if self.explosion_count >=10:
             self.count_explosions.remove(self)            
         else:
             self.explosion_count +=1
-
+    
 
 
 

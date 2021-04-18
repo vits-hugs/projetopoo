@@ -4,6 +4,7 @@ import random
 from spaceship import Nave 
 from meteoro import Meteoro
 from explosion import Explosion
+from itens import heart
 
 pygame.init()
 pygame.font.init()
@@ -35,6 +36,7 @@ img_fundo = pygame.image.load(os.path.join('fundo','fundo.png'))
 clock = pygame.time.Clock()  
 #nave    
 ship = Nave(0,height/2,win,width,height)
+coracao = heart(300,300,win)
 
 def draw():
     #Movimentação do fundo
@@ -59,6 +61,9 @@ def draw():
     
     #desenhando a nave
     ship.draw_nave(ship)
+
+    #coracao 
+    coracao.draw_heart()
     
     #desenhando o tiro
     for bala in tiros:
@@ -77,19 +82,26 @@ def draw():
     for explosion in count_explosions:
         explosion.explosion_timer(current_time)
 
-    #desenhando fonts
-    texto = font.render('Pontuação: '+str(score),1,(255,255,255))
-    win.blit(texto,(0,0))
+    #desenhando texto
+    points_text = font.render('Pontuação: '+str(score),1,(255,255,255))
+    health_text = font.render('Health: '+str(ship.health),1,(255,255,255))
+    win.blit(points_text,(0,0))
+    win.blit(health_text,(230,0))
 
 def collisionFunc(count_meteoro,tiros,ship):
     global score
+    global run
     #check collission
 
     for meteoro in count_meteoro:
         #Meteoro vs Nave
         if meteoro.rect.colliderect(ship.rectNave):
             meteoro.remove_meteoro(count_meteoro,True)
-            print('colidiu com a Nave')
+            ship.nav_collision()
+            explosao = Explosion(meteoro.rect.x,meteoro.rect.y,win,count_explosions)
+            count_explosions.append(explosao)
+            if ship.health <= 0:
+                run = False
         for tiro in tiros:
             if meteoro.rect.colliderect(tiro.rectBullets):
                 score +=1
@@ -98,6 +110,9 @@ def collisionFunc(count_meteoro,tiros,ship):
                 count_explosions.append(explosao)
                 meteoro.remove_meteoro(count_meteoro,True)
                 tiro.remover_balas(True)
+        if ship.rectNave.colliderect(coracao.rect_heart):
+            ship.health = coracao.health_restore(ship.health)
+            print('colidiu com o coração')
 
 def criar_meteoro():
     global criarMeteoroTempo

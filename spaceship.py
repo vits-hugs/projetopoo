@@ -24,6 +24,7 @@ class Nave:
         self.rectNave = self.img.get_rect()
         self.rectNave.x = x
         self.rectNave.y = y
+        self.health = 3
 
     #MÉTODOS 
 
@@ -49,14 +50,18 @@ class Nave:
                 bala.som_tiro()
             
     #desenhando a nave
-    def draw_nave(self,space_ship):
+    def draw_nave(self,space_ship):     
         self.win.blit(space_ship.img,(space_ship.rectNave.x,space_ship.rectNave.y))
-
+    
     #desenhando a turbina
     def draw_turbina(self,i,space_ship):
         self.win.blit(space_ship.img2[i],(self.rectNave.x-27,self.rectNave.y+21))
     def draw_tiro(self,k,space_ship):
         self.win.blit(space_ship.imgtiro[k],(100,100))
+    def nav_collision(self):
+        self.health -= 1
+
+
    
 
 class Bullets:
