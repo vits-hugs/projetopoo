@@ -1,7 +1,7 @@
 import pygame
 import os
 class Meteoro:
-    def __init__(self,px,py,vel):
+    def __init__(self,px,py):
         self.meteoro_img1 = [
             pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10000.png')),(70,70)),
             pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10001.png')),(70,70)),
@@ -20,7 +20,7 @@ class Meteoro:
             pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10014.png')),(70,70)),
             pygame.transform.scale(pygame.image.load(os.path.join('meteoro','a10015.png')),(70,70))
             ]
-        self.vel = vel
+        self.vel = 8
         self.py = py
         self.px = px
         self.z = len(self.meteoro_img1)-1
@@ -43,6 +43,7 @@ class Meteoro:
 
     def remove_meteoro(self,count_meteoro,value):
         count_meteoro.remove(self)
+     
 
 
         

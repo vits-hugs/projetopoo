@@ -5,6 +5,7 @@ from spaceship import Nave
 from meteoro import Meteoro
 from explosion import Explosion
 from itens import heart
+from boss import Stoneman
 
 pygame.init()
 pygame.font.init()
@@ -21,6 +22,8 @@ tiros = []
 px_fundo = 0
 run = True
 somStatus = False
+bossStatus = False
+boss = 0
 current_time = 0
 timeMeteoro = 0
 criarMeteoroTempo = 0
@@ -28,6 +31,9 @@ timeFoguete = 0
 count_meteoro = []
 count_explosions = []
 som_fundo = pygame.mixer.Sound(os.path.join('som','fundo.mp3'))
+coracao_tempo = 0
+coracao_array_object = []
+
 
 #criando um canvas
 win = pygame.display.set_mode((width,height))
@@ -36,11 +42,16 @@ img_fundo = pygame.image.load(os.path.join('fundo','fundo.png'))
 clock = pygame.time.Clock()  
 #nave    
 ship = Nave(0,height/2,win,width,height)
-coracao = heart(300,300,win)
+
 
 def draw():
     #Movimentação do fundo
     global px_fundo
+    global bossStatus 
+    global boss
+    global i
+    global timeFoguete 
+
     if px_fundo == -(width):
         px_fundo = 0
     win.blit(img_fundo,(px_fundo,0))
@@ -48,13 +59,11 @@ def draw():
     px_fundo -=2
 
     #desenhando turbina
-    global i
     if i >= 3:
         ship.draw_turbina(i,ship)
         i = 0
     else:
         ship.draw_turbina(i,ship)
-        global timeFoguete 
         if current_time - timeFoguete >= 75:
             i +=1
             timeFoguete = pygame.time.get_ticks()
@@ -63,8 +72,12 @@ def draw():
     ship.draw_nave(ship)
 
     #coracao 
-    coracao.draw_heart()
-    
+    global coracao_array_object
+    for coracao in coracao_array_object:
+        # Move e Remove coracao
+        coracao.move_heart(coracao_array_object)
+        coracao.draw_heart()   
+
     #desenhando o tiro
     for bala in tiros:
         bala.draw_bullet(win,k)
@@ -88,7 +101,15 @@ def draw():
     win.blit(points_text,(0,0))
     win.blit(health_text,(230,0))
 
-def collisionFunc(count_meteoro,tiros,ship):
+    #desenhando o boss
+    
+    if score >= 5 and bossStatus == False:
+        bossStatus = True
+        boss = Stoneman(width,height,win)
+    if bossStatus == True:
+        boss.draw_stoneman(current_time)
+
+def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
     global score
     global run
     #check collission
@@ -110,15 +131,16 @@ def collisionFunc(count_meteoro,tiros,ship):
                 count_explosions.append(explosao)
                 meteoro.remove_meteoro(count_meteoro,True)
                 tiro.remover_balas(True)
-        if ship.rectNave.colliderect(coracao.rect_heart):
-            ship.health = coracao.health_restore(ship.health)
-            print('colidiu com o coração')
+        for coracao in coracao_array_object:
+            if ship.rectNave.colliderect(coracao.rect_heart):
+                ship.health = coracao.health_restore(ship.health)
+                coracao_array_object.remove(coracao)
 
 def criar_meteoro():
     global criarMeteoroTempo
-    if len(count_meteoro) < 10 and current_time - criarMeteoroTempo >= 1000:
+    if len(count_meteoro) < 15 and current_time - criarMeteoroTempo >= 500:
         criarMeteoroTempo = pygame.time.get_ticks()
-        meteoro = Meteoro(width+50,random.randint(0, height),random.randint(2,7))
+        meteoro = Meteoro(width+50,random.randint(0, height))
         count_meteoro.append(meteoro)
 
 def playMusic():
@@ -136,8 +158,19 @@ def meteoro_img_control():
         for meteoro in count_meteoro:
             meteoro.mudar_img()
 
+def criarCoracao():
+    global coracao_tempo
+    global coracao_array_object
+    global win
+    if (current_time - coracao_tempo) >= 15000:
+        coracao_tempo = pygame.time.get_ticks()
+        coracao_array_object.append(heart(win,width,height))
+
+
+
 #Loop principal do game
 while run:
+    print(bossStatus)
     current_time = pygame.time.get_ticks()
     clock.tick(60)
     win.fill((0,0,0))
@@ -147,6 +180,9 @@ while run:
 
     #Criar meteoro
     criar_meteoro()
+    
+    #Criar coracao
+    criarCoracao()
 
     
     #Controle Movimentação
@@ -154,7 +190,7 @@ while run:
     ship.control_nave(userInput,current_time,tiros)
     
     #collisionCheck
-    collisionFunc(count_meteoro,tiros,ship)
+    collisionFunc(count_meteoro,tiros,ship,coracao_array_object)
     
     #encerrando o game
     for event in pygame.event.get():
