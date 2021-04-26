@@ -33,12 +33,14 @@ count_explosions = []
 som_fundo = pygame.mixer.Sound(os.path.join('som','fundo.mp3'))
 coracao_tempo = 0
 coracao_array_object = []
+NaveDead = False
 
 
 #criando um canvas
 win = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Meteoro')
 img_fundo = pygame.image.load(os.path.join('fundo','fundo.png'))
+game_over_fundo = pygame.image.load(os.path.join('fundo','screen.png'))
 clock = pygame.time.Clock()  
 #nave    
 ship = Nave(0,height/2,win,width,height)
@@ -103,15 +105,17 @@ def draw():
 
     #desenhando o boss
     
-    if score >= 5 and bossStatus == False:
+    if score >= 0 and bossStatus == False:
         bossStatus = True
         boss = Stoneman(width,height,win)
     if bossStatus == True:
         boss.draw_stoneman(current_time)
-
+    
+    #FUNÇÃO DE COLISÃO 
 def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
     global score
     global run
+    global NaveDead
     #check collission
 
     for meteoro in count_meteoro:
@@ -122,8 +126,10 @@ def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
             explosao = Explosion(meteoro.rect.x,meteoro.rect.y,win,count_explosions)
             count_explosions.append(explosao)
             if ship.health <= 0:
-                run = False
+                NaveDead = True
+       
         for tiro in tiros:
+             #Tiro vs Meteoro
             if meteoro.rect.colliderect(tiro.rectBullets):
                 score +=1
                 #Criando explosão
@@ -131,10 +137,31 @@ def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
                 count_explosions.append(explosao)
                 meteoro.remove_meteoro(count_meteoro,True)
                 tiro.remover_balas(True)
+            #Tiro vs Boss
+            if boss != 0:
+                if boss.stoneman_rect.colliderect(tiro.rectBullets):
+                    boss.boss_decrease_health()
+                    explosao = Explosion(tiro.rectBullets.x,tiro.rectBullets.y,win,count_explosions)
+                    count_explosions.append(explosao)
+                    tiro.remover_balas(True)
+                    print('COLIDIU COM O BOSS')
+            
+        #Nave vs Coração
         for coracao in coracao_array_object:
             if ship.rectNave.colliderect(coracao.rect_heart):
                 ship.health = coracao.health_restore(ship.health)
                 coracao_array_object.remove(coracao)
+        
+        
+        #Nave vs Tiro do Boss
+        if boss != 0:
+            for boss_bullet in  boss.bullet_array:
+                if ship.rectNave.colliderect(boss_bullet.bullet_rect):
+                    boss.bullet_array.remove(boss_bullet)
+                    ship.nav_collision()
+                    if ship.health <= 0:
+                        NaveDead = True
+
 
 def criar_meteoro():
     global criarMeteoroTempo
@@ -170,35 +197,40 @@ def criarCoracao():
 
 #Loop principal do game
 while run:
-    print(bossStatus)
-    current_time = pygame.time.get_ticks()
-    clock.tick(60)
-    win.fill((0,0,0))
-    
-    #playMusic
-    playMusic()
+    if NaveDead  == False:
+        print(bossStatus)
+        current_time = pygame.time.get_ticks()
+        clock.tick(60)
+        win.fill((0,0,0))
+        
+        #playMusic
+        playMusic()
 
-    #Criar meteoro
-    criar_meteoro()
-    
-    #Criar coracao
-    criarCoracao()
+        #Criar meteoro
+        criar_meteoro()
+        
+        #Criar coracao
+        criarCoracao()
 
-    
-    #Controle Movimentação
-    userInput = pygame.key.get_pressed()
-    ship.control_nave(userInput,current_time,tiros)
-    
-    #collisionCheck
-    collisionFunc(count_meteoro,tiros,ship,coracao_array_object)
-    
+        
+        #Controle Movimentação
+        userInput = pygame.key.get_pressed()
+        ship.control_nave(userInput,current_time,tiros)
+        
+        #collisionCheck
+        collisionFunc(count_meteoro,tiros,ship,coracao_array_object)
+        #desenhando
+        draw()
+        pygame.display.update()
+    else:
+        win.blit(game_over_fundo,(0,0))
+        print(NaveDead)
+        pygame.display.update()
+
     #encerrando o game
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-    #desenhando
-    draw()
-    pygame.display.update()
 
 
 
