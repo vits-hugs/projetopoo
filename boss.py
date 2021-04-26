@@ -52,6 +52,12 @@ class Stoneman:
         bullet = Boss_bullets(self.stoneman_rect.x,self.stoneman_rect.y)
         self.bullet_array.append(bullet)
 
+    def boss_decrease_health(self):
+        self.health -= 1
+        
+
+
+
 
 class Boss_bullets:
     def __init__(self,px,py):
