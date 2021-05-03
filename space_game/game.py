@@ -7,6 +7,7 @@ from explosion import Explosion
 from itens import heart
 from boss import Enemy
 
+#Iniciando Pygame e fontes
 pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont('Comicsans',40)
@@ -36,10 +37,10 @@ coracao_array_object = []
 NaveDead = False
 boss_dead = False
 
-
 #criando um canvas
 win = pygame.display.set_mode((width,height))
 pygame.display.set_caption('Meteoro')
+
 #FUNDOS DO JOGO
 img_fundo = pygame.image.load(os.path.join('fundo','fundo.png'))
 game_over_fundo = pygame.image.load(os.path.join('fundo','gameover.fw.png'))
@@ -144,6 +145,7 @@ def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
                 count_explosions.append(explosao)
                 meteoro.remove_meteoro(count_meteoro,True)
                 tiro.remover_balas(True)
+                
             #Tiro vs Boss
             if boss != 0:
                 if boss.enemy_rect.colliderect(tiro.rectBullets):
@@ -151,7 +153,6 @@ def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
                     explosao = Explosion(tiro.rectBullets.x,tiro.rectBullets.y,win,count_explosions)
                     count_explosions.append(explosao)
                     tiro.remover_balas(True)
-                    print('COLIDIU COM O BOSS')
                     if boss.health <= 0:
                         boss_dead = True
             
@@ -204,7 +205,7 @@ def criarCoracao():
 
 
 
-#Loop principal do game
+#GAME LOOP
 while run:
     if NaveDead  == False and boss_dead == False:
         current_time = pygame.time.get_ticks()
