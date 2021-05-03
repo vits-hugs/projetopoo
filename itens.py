@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+#Luis
 class heart:
     def __init__(self,win,width,height):
         self.heart_img = pygame.transform.scale(pygame.image.load(os.path.join('itens','heart.png')),(100,100))

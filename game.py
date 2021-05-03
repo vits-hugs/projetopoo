@@ -5,7 +5,7 @@ from spaceship import Nave
 from meteoro import Meteoro
 from explosion import Explosion
 from itens import heart
-from boss import Stoneman
+from boss import Enemy
 
 pygame.init()
 pygame.font.init()
@@ -105,11 +105,11 @@ def draw():
 
     #desenhando o boss
     
-    if score >= 0 and bossStatus == False:
+    if score >= 10 and bossStatus == False:
         bossStatus = True
-        boss = Stoneman(width,height,win)
+        boss = Enemy(width,height,win)
     if bossStatus == True:
-        boss.draw_stoneman(current_time)
+        boss.draw_enemy(current_time)
     
     #FUNÇÃO DE COLISÃO 
 def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
@@ -139,7 +139,7 @@ def collisionFunc(count_meteoro,tiros,ship,coracao_array_object):
                 tiro.remover_balas(True)
             #Tiro vs Boss
             if boss != 0:
-                if boss.stoneman_rect.colliderect(tiro.rectBullets):
+                if boss.enemy_rect.colliderect(tiro.rectBullets):
                     boss.boss_decrease_health()
                     explosao = Explosion(tiro.rectBullets.x,tiro.rectBullets.y,win,count_explosions)
                     count_explosions.append(explosao)

@@ -1,5 +1,7 @@
 import pygame
 import os
+
+#Luis
 class Meteoro:
     def __init__(self,px,py):
         self.meteoro_img1 = [

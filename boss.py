@@ -1,43 +1,46 @@
 import pygame
 import os
 import random
-class Stoneman:
+
+#Nicolas
+
+class Enemy:
     def __init__(self,width,height,win):
-        self.health = 50
+        self.health = 1
         self.width = width
         self.height = height
-        self.boss_img_stoneman =pygame.transform.rotate(pygame.transform.scale(pygame.image.load(os.path.join('enemy','boss.png')),(130,130)),-90)
-        self.stoneman_rect = pygame.Rect(width/2,height/2,70,70)
-        self.stoneman_rect.x = width/2
-        self.stoneman_rect.y = height/2
+        self.boss_img_enemy =pygame.transform.rotate(pygame.transform.scale(pygame.image.load(os.path.join('enemy','boss.png')),(130,130)),-90)
+        self.enemy_rect = pygame.Rect(width/2,height/2,70,70)
+        self.enemy_rect.x = width/2
+        self.enemy_rect.y = height/2
         self.movy = True
         self.movx = True
         self.win = win
         self.bullet_array = []
         self.attack_timer = 0
-    def draw_stoneman(self,current_time):
+    def draw_enemy(self,current_time):
         self.move_boss(current_time)
-        self.win.blit(self.boss_img_stoneman,( self.stoneman_rect.x, self.stoneman_rect.y))
+        self.win.blit(self.boss_img_enemy,( self.enemy_rect.x, self.enemy_rect.y))
 
     def move_boss(self,current_time):
         #mov y
         if self.movy == True:
-            self.stoneman_rect.y += 1
-            if self.stoneman_rect.y >= self.height-100:
+            self.enemy_rect.y += 1
+            if self.enemy_rect.y >= self.height-100:
                 self.movy = False
         if self.movy == False:
-            self.stoneman_rect.y -= 1
-            if self.stoneman_rect.y <= -(self.height - 500):
+            self.enemy_rect.y -= 1
+            if self.enemy_rect.y <= -(self.height - 500):
                 self.movy = True
 
         #mov x
         if self.movx == True:    
-            self.stoneman_rect.x -=1
-            if self.stoneman_rect.x <= 500:
+            self.enemy_rect.x -=1
+            if self.enemy_rect.x <= 500:
                 self.movx = False
         if self.movx == False:
-            self.stoneman_rect.x +=1
-            if self.stoneman_rect.x >=800:
+            self.enemy_rect.x +=1
+            if self.enemy_rect.x >=800:
                 self.movx = True
         #attack
         if (current_time - self.attack_timer) >= 1000:
@@ -49,7 +52,7 @@ class Stoneman:
         
 
     def boss_attack(self):
-        bullet = Boss_bullets(self.stoneman_rect.x,self.stoneman_rect.y)
+        bullet = Boss_bullets(self.enemy_rect.x,self.enemy_rect.y)
         self.bullet_array.append(bullet)
 
     def boss_decrease_health(self):
